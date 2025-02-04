@@ -1,0 +1,42 @@
+server:
+  port: 7002
+
+spring:
+  application:
+    name: DUDU-TESTES
+  datasource:
+    config:
+      pool-name: teste
+      type: com.zaxxer.hikari.HikariDataSource
+      idle-timeout: 120000
+      jdbc-url: jdbc:postgresql://54.94.0.212:5432/dudu_testes
+      driver-class-name: org.postgresql.Driver
+      username: postgres
+      password: 123456
+      connection-test-query: SELECT 1
+      max-lifetime: 300000
+      connection-timeout: 10000
+      leak-detection-threshold: 300000
+      minimum-idle: 5
+      maximum-pool-size: 10
+#  servlet:
+#    multipart:
+#      max-file-size: 10MB
+#      max-request-size: 10MB
+#  mvc:
+#    pathmatch:
+#      matching-strategy: ANT_PATH_MATCHER
+#      # matching-strategy: ant_path_matcher
+
+#  mail:
+#    properties:
+#      mail:
+#        smtp:
+#          starttls:
+#            enable=true:
+#
+#logging:
+#  file:
+#    path: .
+#    name: ws-log.log
+#
