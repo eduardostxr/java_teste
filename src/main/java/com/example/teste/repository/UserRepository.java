@@ -1,42 +1,47 @@
 package com.example.teste.repository;
 
-import com.example.teste.model.Retorno;
+import com.example.teste.model.Profissao;
 import com.example.teste.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Objects;
 
 @Repository
 public class UserRepository {
 
-    @Autowired
-    private JdbcTemplate poolUser;
+    private final JdbcTemplate jdbcTemplate;
 
-    public Retorno<ArrayList<User>> allUsers() {
-        String query = "SELECT * FROM users;";
-        Retorno<ArrayList<User>> retorno = new Retorno<>();
-        ArrayList<User> users = new ArrayList<>();
-        try (
-                Connection connection = poolUser.getDataSource().getConnection();
-                Statement statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery(query);) {
-            while (resultSet.next()) {
-                users.add(User.fromResultSet(resultSet));
-            }
-            retorno.value = users;
-            retorno.message = "Usuários buscados com sucesso";
+    public UserRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
-        } catch (SQLException e) {
-            retorno.value = null;
-            retorno.message = "Erro ao buscar usuários";
+    public Profissao createProfissao(String nome) {
+        String query = "INSERT INTO profissaoo (nome) VALUES (?) RETURNING id, nome";
+        return jdbcTemplate.queryForObject(query, (rs, rowNum) ->
+                new Profissao(rs.getInt("id"), rs.getString("nome")), nome);
+    }
+
+    public User createUser(String email, String senha, int profissaoId) {
+        String query = """
+            INSERT INTO users (email, senha, profissao_id) 
+            VALUES (?, ?, ?) 
+            RETURNING id, email, senha, profissao_id, nome AS profissao_nome
+            FROM profissao WHERE id = ?
+        """;
+        return jdbcTemplate.queryForObject(query, (rs, rowNum) -> User.fromResultSet(rs), email, senha, profissaoId, profissaoId);
+    }
+
+    public User findByEmail(String email) {
+        String query = """
+            SELECT u.id, u.email, u.senha, u.profissao_id, p.nome AS profissao_nome
+            FROM users u
+            LEFT JOIN profissao p ON u.profissao_id = p.id
+            WHERE u.email = ?
+        """;
+        try {
+            return jdbcTemplate.queryForObject(query, (rs, rowNum) -> User.fromResultSet(rs), email);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
         }
-        return retorno;
     }
 }

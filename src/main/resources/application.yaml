@@ -6,13 +6,12 @@ spring:
     name: DUDU-TESTES
   datasource:
     config:
-      pool-name: teste
-      type: com.zaxxer.hikari.HikariDataSource
-      idle-timeout: 120000
-      jdbc-url: jdbc:postgresql://localhost:5432/dudu_testes
-      driver-class-name: org.postgresql.Driver
+      jdbc-url: jdbc:postgresql://localhost:5432/teste_rodrigo
       username: postgres
       password: 123456
+      driver-class-name: org.postgresql.Driver
+      pool-name: teste
+      idle-timeout: 120000
       connection-test-query: SELECT 1
       max-lifetime: 300000
       connection-timeout: 10000

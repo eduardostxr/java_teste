@@ -1,38 +1,30 @@
 package com.example.teste.model;
 
-import com.google.gson.JsonObject;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.ParseException;
-
 public class Profissao {
-    public int id;
-    public String nome;
+    private int id;
+    private String nome;
 
-    public static Profissao fromResultSet(ResultSet rs) throws SQLException {
-        Profissao profissao = new Profissao();
-        profissao.id = rs.getInt("id");
-        profissao.nome = rs.getString("nome");
-        return profissao;
+    public Profissao() {}
+
+    public Profissao(int id, String nome) {
+        this.id = id;
+        this.nome = nome;
     }
 
-    public static Profissao fromJson(JsonObject json) throws ParseException {
-        Profissao profissao = new Profissao();
-        profissao.id = json.get("id").getAsInt();
-        profissao.nome = json.get("nome").getAsString();
-        return profissao;
+    // Getters and Setters
+    public int getId() {
+        return id;
     }
 
-    public static JsonObject toJson(Profissao profissao) {
-        JsonObject json = new JsonObject();
-        json.addProperty("id", profissao.id);
-        json.addProperty("nome", profissao.nome);
-        return json;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    @Override
-    public String toString(){
-        return " id: " + this.id + " descricao: " + this.nome;
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 }

@@ -1,33 +1,26 @@
-package com.example.teste.controllers;
+package com.example.teste.controller;
+
 import com.example.teste.model.Retorno;
 import com.example.teste.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.example.teste.service.UserService;
-
-import java.util.ArrayList;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/users")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-//    @Autowired
-//    public UserController(UserService userService) {
-//        this.userService = userService;
-//    }
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
-    @GetMapping("allUsers")
-    public ResponseEntity<Retorno<ArrayList<User>>> getUsers() {
-        Retorno<ArrayList<User>> retorno = userService.allUsers();
-        if (retorno.value != null) {
-            return ResponseEntity.ok(retorno);
-        } else {
-            retorno.internalErrorMessage = null;
-            return ResponseEntity.badRequest().body(retorno);
-        }
+    @PostMapping("/create")
+    public ResponseEntity<Retorno<User>> createUser(@RequestParam String email,
+                                                    @RequestParam String senha,
+                                                    @RequestParam String profissao) {
+        Retorno<User> retorno = userService.createUserProfissao(email, senha, profissao);
+        return ResponseEntity.status(retorno.getStatus()).body(retorno);
     }
 }
