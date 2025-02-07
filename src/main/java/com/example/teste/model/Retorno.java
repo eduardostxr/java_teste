@@ -1,7 +1,6 @@
 package com.example.teste.model;
 
 import org.springframework.http.HttpStatus;
-import java.util.List;
 
 public class Retorno<T> {
     private T value;
@@ -9,10 +8,6 @@ public class Retorno<T> {
     private int status;
     private String error;
 
-    public Retorno(T value, String message) {
-        this.value = value;
-        this.message = message;
-    }
 
     // Construtor para sucesso
     public Retorno(T value, String message, HttpStatus status) {

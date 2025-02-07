@@ -24,8 +24,8 @@ public class UserController {
         // Retorno mais completo que não interessa para o front
         Retorno<User> rtService = userService.createUserProfissao(email, senha, profissao);
         // Apenas valor e mensagem
-        Retorno<User> rtController = new Retorno<>(rtService.getValue(), rtService.getMessage());
-        return ResponseEntity.status(rtController.getStatus()).body(rtController);
+        Retorno<User> rtController = new Retorno<>(rtService.getValue(), rtService.getMessage(), HttpStatus.valueOf(rtService.getStatus()));
+        return ResponseEntity.status(rtService.getStatus()).body(rtController);
     }
 
 }
