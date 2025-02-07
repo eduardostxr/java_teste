@@ -20,15 +20,27 @@ public class UserService {
 
     @Transactional
     public Retorno<User> createUserProfissao(String email, String senha, String profissaoNome) {
-        if (userRepository.findByEmail(email) != null) {
-            return ServiceResponseHandler.badRequest(
-                    "E-mail já está em uso.",
-                    "E-mail informado já existe"
-            );
-        }
-        Profissao profissao = userRepository.createProfissao(profissaoNome);
-        User user = userRepository.createUser(email, senha, profissao.getId());
+        try {
+            User emailUser = userRepository.findByEmail(email);
+            if (emailUser != null) {
+                return ServiceResponseHandler.conflict("E-mail já cadastrado");
+            }
 
-        return ServiceResponseHandler.created(user, "Usuário criado com sucesso.");
+            Profissao profissao = userRepository.createProfissao(profissaoNome);
+            // Por segurança, porque deve ser criado ou vai retornar uma exception no Repository
+            if (profissao == null) {
+                return ServiceResponseHandler.notFound("Profissão não encontrada.");
+            }
+
+            User user = userRepository.createUser(email, senha, profissao.getId());
+            return ServiceResponseHandler.created(user, "Usuário criado com sucesso.");
+
+        } catch (DataAccessException e) {
+            // ServiceResponseHandler tem os diferentes tipos de exceptios com status definido
+            return ServiceResponseHandler.internalError("Erro no banco de dados.", e.getMessage(), e);
+        } catch (Exception e) {
+            return ServiceResponseHandler.internalError("Erro inesperado ao criar usuário.", e.getMessage(), e);
+        }
     }
+
 }

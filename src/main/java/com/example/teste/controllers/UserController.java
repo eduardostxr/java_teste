@@ -1,8 +1,9 @@
-package com.example.teste.controller;
+package com.example.teste.controllers;
 
 import com.example.teste.model.Retorno;
 import com.example.teste.model.User;
 import com.example.teste.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,11 @@ public class UserController {
     public ResponseEntity<Retorno<User>> createUser(@RequestParam String email,
                                                     @RequestParam String senha,
                                                     @RequestParam String profissao) {
-        Retorno<User> retorno = userService.createUserProfissao(email, senha, profissao);
-        return ResponseEntity.status(retorno.getStatus()).body(retorno);
+        // Retorno mais completo que não interessa para o front
+        Retorno<User> rtService = userService.createUserProfissao(email, senha, profissao);
+        // Apenas valor e mensagem
+        Retorno<User> rtController = new Retorno<>(rtService.getValue(), rtService.getMessage());
+        return ResponseEntity.status(rtController.getStatus()).body(rtController);
     }
+
 }
